@@ -1,10 +1,30 @@
+# Enable URL rewriting
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /idxlite/
 
-  # Redirect all requests to index.html
+  # Allow access to existing files and folders
   RewriteRule ^index\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
+
+  # Redirect everything else to index.html (for SPA apps)
   RewriteRule . /idxlite/index.html [L]
+</IfModule>
+
+# Force HTTPS (optional)
+<IfModule mod_rewrite.c>
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# Cache static files
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
 </IfModule>
